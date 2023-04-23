@@ -173,9 +173,11 @@ const GET = exports.GET = {
     if(node["itunes:category"] && node["itunes:category"].length > 0){
       categoriesArray = node["itunes:category"].map( item => {
         let category = []
-        category.push(item['$'].text) // primary category
-        if (item['itunes:category']) { // sub-category
-          category.push(item['itunes:category'][0]['$'].text)
+        if (item && item['$'] && item['$'].text) {
+          category.push(item['$'].text) // primary category
+          if (item['itunes:category']) { // sub-category
+            category.push(item['itunes:category'][0]['$'].text)
+          }
         }
         return category
       })
