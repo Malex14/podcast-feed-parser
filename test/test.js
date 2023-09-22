@@ -1,48 +1,49 @@
-const chai = require('chai')
-const expect = chai.expect
-const chaiAsPromised = require('chai-as-promised')
-const fs = require('fs')
-const path = require('path')
-const podcastFeedParser = require('../index')
-const ERRORS = podcastFeedParser.ERRORS
+import { expect as _expect, use } from 'chai'
+const expect = _expect
+import chaiAsPromised from 'chai-as-promised'
+import { readFileSync } from 'fs'
+import { dirname, join } from 'path'
+import { ERRORS as _ERRORS, getPodcastFromURL, getPodcastFromFeed } from '../src/index.js'
+import { fileURLToPath } from 'url'
+const ERRORS = _ERRORS
 
-const testFilesPath = path.join(__dirname, 'testfiles')
+const testFilesPath = join(dirname(fileURLToPath(import.meta.url)), 'testfiles')
 
-chai.use(chaiAsPromised)
+use(chaiAsPromised)
 
 describe('Reading files', function () {
   it('should read the file', function (){
-    expect(fs.readFileSync(testFilesPath+'/bc-sample.xml', 'utf8')).to.be.a('string')
+    expect(readFileSync(testFilesPath+'/bc-sample.xml', 'utf8')).to.be.a('string')
   })
 })
 
 describe('Fetching Feeds', function () {
   it('should fetch the feed and receive a promise', async function () {
-    await expect(podcastFeedParser.getPodcastFromURL('http://allthingschemical.libsyn.com/rss')).to.be.a('promise')
+    await expect(getPodcastFromURL({url:'http://allthingschemical.libsyn.com/rss'})).to.be.a('promise')
   })
   it('should fetch the feed and receive a promise that is fulfilled', async function () {
-    await expect(podcastFeedParser.getPodcastFromURL('http://allthingschemical.libsyn.com/rss')).to.eventually.be.fulfilled
+    await expect(getPodcastFromURL({url: 'http://allthingschemical.libsyn.com/rss'})).to.eventually.be.fulfilled
   })
   it('should fetch the feed and receive a promise that is rejected', async function () {
-    await expect(podcastFeedParser.getPodcastFromURL('http://allthingschemical.libsyn.com/notarealurl')).to.eventually.be.rejected
+    await expect(getPodcastFromURL({url: 'http://allthingschemical.libsyn.com/notarealurl'})).to.eventually.be.rejected
   })
 })
 
 describe('Parsing Local Feeds', function () {
-  const sampleFeed = fs.readFileSync(testFilesPath+'/bc-sample.xml', 'utf8').toString()
-  const badSampleFeed = fs.readFileSync(testFilesPath+'/bc-sample-bad.xml', 'utf8').toString()
+  const sampleFeed = readFileSync(testFilesPath+'/bc-sample.xml', 'utf8').toString()
+  const badSampleFeed = readFileSync(testFilesPath+'/bc-sample-bad.xml', 'utf8').toString()
 
   it('should parse the feed and return a Podcast object', function () {
-    expect(podcastFeedParser.getPodcastFromFeed(sampleFeed)).to.be.an('object').that.contains.keys('meta', 'episodes')
+    expect(getPodcastFromFeed(sampleFeed)).to.be.an('object').that.contains.keys('meta', 'episodes')
   })
   it('should parse a bad feed and return an error', function () {
-    expect(podcastFeedParser.getPodcastFromFeed.bind(podcastFeedParser, badSampleFeed)).to.throw(ERRORS.parsingError)
+    expect(getPodcastFromFeed(badSampleFeed)).to.throw(ERRORS.parsingError)
   })
 })
 
 describe('Getting Podcast Object from Sample Feed', function () {
-  const sampleFeed = fs.readFileSync(testFilesPath+'/bc-sample.xml', 'utf8').toString()
-  const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed)
+  const sampleFeed = readFileSync(testFilesPath+'/bc-sample.xml', 'utf8').toString()
+  const podcast = getPodcastFromFeed(sampleFeed)
 
   it('should be a valid Podcast Object', function () {
     expect(podcast).to.be.an('object').that.contains.keys('meta', 'episodes')
@@ -51,7 +52,7 @@ describe('Getting Podcast Object from Sample Feed', function () {
   describe('Checking Podcast Meta Information', function () {
 
     it('should be a valid object with all default fields', function () {
-      expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastUpdated', 'link',
+      expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastBuildDate', 'link',
         'language', 'editor', 'author', 'summary', 'categories', 'owner',
         'explicit', 'complete', 'blocked')
     })
@@ -60,7 +61,7 @@ describe('Getting Podcast Object from Sample Feed', function () {
       expect(podcast.meta.description).to.equal('All Things Chemical is a podcast produced by Bergeson & Campbell, P.C. (B&C®), a Washington D.C. law firm focusing on chemical law, business, and litigation matters. All Things Chemical is hosted by Lynn L. Bergeson, managing partner of B&C. In each episode, we bring you intelligent, insightful, and engaging conversation about everything related to industrial, pesticidal, and specialty chemicals, as well as the law and business issues surrounding chemicals. Our incredibly talented team of lawyers, scientists, and consultants keep you abreast of the changing world of both domestic and international chemical regulation and provide analysis of the many intriguing and complicated issues surrounding this space.')
       expect(podcast.meta.subtitle).to.equal('')
       expect(podcast.meta.imageURL).to.equal('https://ssl-static.libsyn.com/p/assets/0/0/e/b/00eb13bdea311055/AllThingsChemicalLogo1400.png')
-      expect(podcast.meta.lastUpdated).to.equal('2018-12-06T17:51:50.000Z')
+      expect(podcast.meta.lastBuildDate.toISOString()).to.equal('2018-12-06T17:51:50.000Z')
       expect(podcast.meta.link).to.equal('http://www.lawbc.com')
       expect(podcast.meta.language).to.equal('en')
       expect(podcast.meta.editor).to.equal('info@lawbc.com (info@lawbc.com)')
@@ -98,7 +99,7 @@ describe('Getting Podcast Object from Sample Feed', function () {
         expect(podcast.episodes[0].description).to.equal('<p>This week, I sat down with Dr. Richard Engler, our Director of Chemistry, to discuss Confidential Business Information (CBI). CBI is both a term of art under the Toxic Substances Control Act (TSCA) and can be understood broadly to be anything from trade secrets to you know, the secret sauce of a chemical formulation that makes a product profitable. In our conversation, we focused on how this concept of CBI functions under TSCA and how businesses need to handle CBI during the EPA’s chemical review process.</p> <p>Rich is the perfect person to discuss the concept of CBI. Rich is 17-year veteran of the U.S. Environmental Protection Agency (EPA). He has participated in thousands of Toxic Substances Control Act (TSCA) substance reviews at EPA, and knows the ins-and-outs of how CBI should be handled.</p> <p>Our conversation touches upon some of the most important legal and business considerations when dealing with CBI and the EPA: how the EPA exactly defines CBI, where problems can arise, and how to avoid these through careful preparation and planning.</p> <p>ALL MATERIALS IN THIS PODCAST ARE PROVIDED SOLELY FOR INFORMATIONAL AND ENTERTAINMENT PURPOSES. THE MATERIALS ARE NOT INTENDED TO CONSTITUTE LEGAL ADVICE OR THE PROVISION OF LEGAL SERVICES. ALL LEGAL QUESTIONS SHOULD BE ANSWERED DIRECTLY BY A LICENSED ATTORNEY PRACTICING IN THE APPLICABLE AREA OF LAW.</p> <p> </p>')
         expect(podcast.episodes[0].subtitle).to.equal('This week, I sat down with Dr. Richard Engler, our Director of Chemistry, to discuss Confidential Business Information (CBI). CBI is both a term of art under the Toxic Substances Control Act (TSCA) and can be understood broadly to be anything from...')
         expect(podcast.episodes[0].imageURL).to.equal('https://ssl-static.libsyn.com/p/assets/0/0/e/b/00eb13bdea311055/AllThingsChemicalLogo1400.png')
-        expect(podcast.episodes[0].pubDate).to.equal('2018-11-29T10:30:00.000Z')
+        expect(podcast.episodes[0].pubDate.toISOString()).to.equal('2018-11-29T10:30:00.000Z')
         expect(podcast.episodes[0].link).to.equal('http://allthingschemical.libsyn.com/confidential-business-information-under-tsca')
         expect(podcast.episodes[0].language).to.be.undefined
         expect(podcast.episodes[0].enclosure).to.eql({
@@ -117,10 +118,10 @@ describe('Getting Podcast Object from Sample Feed', function () {
 })
 
 describe('Checking custom options', function () {
-  const sampleFeed = fs.readFileSync(testFilesPath+'/bc-sample-custom-tags.xml', 'utf8').toString()
+  const sampleFeed = readFileSync(testFilesPath+'/bc-sample-custom-tags.xml', 'utf8').toString()
   it('should return object with all default fields when no options object is provided', function() {
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed)
-    expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastUpdated', 'link',
+    const podcast = getPodcastFromFeed(sampleFeed)
+    expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastBuildDate', 'link',
       'language', 'editor', 'author', 'summary', 'categories', 'owner',
       'explicit', 'complete', 'blocked')
     expect(podcast.episodes[0]).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'pubDate',
@@ -135,8 +136,8 @@ describe('Checking custom options', function () {
         'episodes': ['default']
       }
     }
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
-    expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastUpdated', 'link',
+    const podcast = getPodcastFromFeed(sampleFeed, options)
+    expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastBuildDate', 'link',
       'language', 'editor', 'author', 'summary', 'categories', 'owner',
       'explicit', 'complete', 'blocked')
     expect(podcast.episodes[0]).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'pubDate',
@@ -151,8 +152,8 @@ describe('Checking custom options', function () {
         'episodes': ['default', 'timeline']
       }
     }
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
-    expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastUpdated', 'link',
+    const podcast = getPodcastFromFeed(sampleFeed, options)
+    expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'lastBuildDate', 'link',
       'language', 'editor', 'author', 'summary', 'categories', 'owner',
       'explicit', 'complete', 'blocked', 'webMaster')
     expect(podcast.episodes[0]).to.be.an('object').that.contains.keys('title', 'description', 'subtitle', 'imageURL', 'pubDate',
@@ -167,7 +168,7 @@ describe('Checking custom options', function () {
         'episodes': ['title', 'pubDate', 'timeline']
       }
     }
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
+    const podcast = getPodcastFromFeed(sampleFeed, options)
     expect(podcast.meta).to.be.an('object').that.contains.keys('title', 'description', 'webMaster')
     expect(podcast.episodes[0]).to.be.an('object').that.contains.keys('title', 'pubDate', 'timeline')
   })
@@ -179,7 +180,7 @@ describe('Checking custom options', function () {
         episodes: ['pubDate']
       }
     }
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
+    const podcast = getPodcastFromFeed(sampleFeed, options)
     expect(podcast.episodes[0]).to.be.an('object')
   })
 
@@ -189,7 +190,7 @@ describe('Checking custom options', function () {
         meta: ['booklink']
       }
     }
-    expect(podcastFeedParser.getPodcastFromFeed.bind(podcastFeedParser, sampleFeed, options)).to.throw(ERRORS.requiredError)
+    expect(getPodcastFromFeed(sampleFeed, options)).to.throw(ERRORS.requiredError)
   })
 
   it('should return an object with uncleaned title field', function() {
@@ -198,8 +199,8 @@ describe('Checking custom options', function () {
         'meta': 'title'
       }
     }
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
-    expect(podcast.meta.title).to.be.an('array')
+    const podcast = getPodcastFromFeed(sampleFeed, options)
+    expect(podcast.meta.title).to.be.an('string')
   })
 
   it('should return an object with uncleaned duration field', function() {
@@ -208,23 +209,23 @@ describe('Checking custom options', function () {
         'episodes': ['duration']
       }
     }
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
+    const podcast = getPodcastFromFeed(sampleFeed, options)
     expect(podcast.episodes[0].duration[0]).to.be.a('string')
   })
 })
 
 describe("Checking re-ordering functionality", function() {
   it('should list episodes in order described by order tags in the rss feed', function() {
-    const sampleFeed = fs.readFileSync(testFilesPath+'/bc-sample-order.xml', 'utf8').toString()
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed)
+    const sampleFeed = readFileSync(testFilesPath+'/bc-sample-order.xml', 'utf8').toString()
+    const podcast = getPodcastFromFeed(sampleFeed)
     expect(podcast.episodes[3].title).to.equal('Chemical Regulation in the Middle East') // order 1
     expect(podcast.episodes[2].title).to.equal('Animal Testing and New TSCA') // order 2
     expect(podcast.episodes[1].title).to.equal('Introducing All Things Chemical ') // default ordering by pubDate
   })
 
   it('should order by title when no order is specified and pubDate is the same', async function() {
-    const sampleFeed = fs.readFileSync(testFilesPath+'/replyall-sample-ordering.xml', 'utf8').toString()
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed)
+    const sampleFeed = readFileSync(testFilesPath+'/replyall-sample-ordering.xml', 'utf8').toString()
+    const podcast = getPodcastFromFeed(sampleFeed)
     expect(podcast.episodes[2].title).to.equal('Reply All Mic Test') // first by pubDate
     expect(podcast.episodes[1].title).to.equal('#1 A Stranger Says I Love You') // pubDate is the same, order by title
     expect(podcast.episodes[0].title).to.equal('#2 The Secret, Gruesome Internet For Doctors') // pubDate is the same, order by title
@@ -233,8 +234,8 @@ describe("Checking re-ordering functionality", function() {
 
 describe("Checking handling of new-feed-url", function() {
   it('should ignore new-feed-url element and parse feed normally', function() {
-    const sampleFeed = fs.readFileSync(testFilesPath+'/bc-sample-new-feed-url.xml', 'utf8').toString()
-    const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed)
+    const sampleFeed = readFileSync(testFilesPath+'/bc-sample-new-feed-url.xml', 'utf8').toString()
+    const podcast = getPodcastFromFeed(sampleFeed)
     expect(podcast.meta.title).to.equal('All Things Chemical')
   })
 
