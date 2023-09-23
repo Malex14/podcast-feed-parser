@@ -63,37 +63,36 @@ By default, `podcast-feed-parser` will parse a podcast's xml feed and return an 
 For fetching remote feeds from urls, use `getPodcastFromURL`:
 
 ```js
-const podcastFeedParser = require("podcast-feed-parser")
+const podcastFeedParser = require('podcast-feed-parser');
 
 // for fetching remote feeds, use getPodcastFromURL.
 // Note that function must be async
-async function printPodcastTitle (url) {
-    const podcast = await podcastFeedParser.getPodcastFromURL(url)
-    console.log(podcast.meta.title)
+async function printPodcastTitle(url) {
+	const podcast = await podcastFeedParser.getPodcastFromURL(url);
+	console.log(podcast.meta.title);
 }
 
-printPodcastTitle('http://feeds.gimletmedia.com/hearreplyall')
+printPodcastTitle('http://feeds.gimletmedia.com/hearreplyall');
 // "Reply All"
-
 ```
 
 If you already have the podcast feed xml, use `getPodcastFromFeed`:
 
 ```js
-const podcastFeedParser = require("podcast-feed-parser")
-const fs = require('fs')
+const podcastFeedParser = require('podcast-feed-parser');
+const fs = require('fs');
 
 // if you already have the feed xml, you can parse
 // synchronously with getPodcastFromFeed
-const podcastFeed = fs.readFileSync('path/to/podcast-feed.xml', 'utf8')
-const podcast = podcastFeedParser.getPodcastFromFeed(podcastFeed)
+const podcastFeed = fs.readFileSync('path/to/podcast-feed.xml', 'utf8');
+const podcast = podcastFeedParser.getPodcastFromFeed(podcastFeed);
 
-console.log(podcast.meta.title)
+console.log(podcast.meta.title);
 // "My Podcast"
 
-podcast.episodes.forEach( (episode) => {
-    console.log(episode.title)
-})
+podcast.episodes.forEach((episode) => {
+	console.log(episode.title);
+});
 // "My Episode 1"
 // "My Episode 2"
 ```
@@ -153,23 +152,23 @@ You can customize `podcast-feed-parser` by passing an optional `options` object 
 
 ```js
 const options = {
-  // specifies the fields to be parsed from the podcast feed
-  fields: {
-    meta: [],
-    episodes: []
-  },
-  // specifies the fields which must be present for the function to return without
-  // an error
-  required: {
-    meta: [],
-    episodes: []
-  },
-  // specifies which fields should not have any of the cleaning functions applied
-  uncleaned: {
-    meta: [],
-    episodes: []
-  }
-}
+	// specifies the fields to be parsed from the podcast feed
+	fields: {
+		meta: [],
+		episodes: []
+	},
+	// specifies the fields which must be present for the function to return without
+	// an error
+	required: {
+		meta: [],
+		episodes: []
+	},
+	// specifies which fields should not have any of the cleaning functions applied
+	uncleaned: {
+		meta: [],
+		episodes: []
+	}
+};
 ```
 
 ### Fields
@@ -182,15 +181,15 @@ If you specify particular fields for either `meta` or `episodes`, the final podc
 
 ```js
 const options = {
-  fields : {
-    'meta': ['title', 'description', 'webMaster'],
-    'episodes': ['title', 'pubDate', 'timeline']
-  }
-}
+	fields: {
+		meta: ['title', 'description', 'webMaster'],
+		episodes: ['title', 'pubDate', 'timeline']
+	}
+};
 
-const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
+const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options);
 
-console.log(podcast)
+console.log(podcast);
 // { meta:
 //    { title: 'All Things Chemical',
 //      description: 'All Things Chemical is a podcast...',
@@ -210,15 +209,15 @@ If you wish to use the default fields listed in the [Default](#default) section,
 
 ```js
 const options = {
-  fields : {
-    'meta': ['default', 'webMaster'],
-    'episodes': ['default', 'timeline']
-  }
-}
+	fields: {
+		meta: ['default', 'webMaster'],
+		episodes: ['default', 'timeline']
+	}
+};
 
-const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
+const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options);
 
-console.log(podcast)
+console.log(podcast);
 // { meta:
 //    { title: 'All Things Chemical',
 //      description: 'All Things Chemical is a podcast...',
@@ -244,16 +243,16 @@ By default, `podcast-feed-parser` will quietly return an `undefined` value if it
 
 ```js
 const options = {
-  fields : {
-    'meta': ['title', 'description'],
-    'episodes': ['title', 'pubDate']
-  },
-  required: {
-    'meta': ['title']
-  }
-}
+	fields: {
+		meta: ['title', 'description'],
+		episodes: ['title', 'pubDate']
+	},
+	required: {
+		meta: ['title']
+	}
+};
 
-const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
+const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options);
 
 // If podcast feed does not have a title attribute, parser will throw a requiredError
 
@@ -273,28 +272,27 @@ you can list fields which should remain uncleaned in the `uncleaned` options obj
 ```js
 // sampleFeed
 <xml>
-  <itunes:duration>39:58</itunes:duration>
-</xml>
+	<itunes:duration>39:58</itunes:duration>
+</xml>;
 
 // -------------
 
 // default behavior with no options supplied
-const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed)
-console.log(podcast.episodes[0].duration)
+const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed);
+console.log(podcast.episodes[0].duration);
 // 2398
 
 // -------------
 
 const options = {
-  uncleaned: {
-    'episodes': ['duration']
-  }
-}
+	uncleaned: {
+		episodes: ['duration']
+	}
+};
 
-const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options)
-console.log(podcast.episodes[0].duration)
+const podcast = podcastFeedParser.getPodcastFromFeed(sampleFeed, options);
+console.log(podcast.episodes[0].duration);
 // ['39:58']
-
 ```
 
 ## Asynchronously Fetching Remote Feeds
@@ -302,17 +300,16 @@ console.log(podcast.episodes[0].duration)
 `podcast-feed-parser` can also fetch and parse remote feeds in both the browser and server environment thanks to `isomorphic-fetch`. Simply call `getPodcastFromURL(url, options)`. Functions which fetch remote feeds must be asynchronous and utilize async/await.
 
 ```js
-const podcastFeedParser = require("podcast-feed-parser")
+const podcastFeedParser = require('podcast-feed-parser');
 
-async function getNumberOfEpisodes (url) {
- const podcast = await podcastFeedParser.getPodcastFromURL(url)
- console.log(podcast.meta.title, podcast.episodes.length)
+async function getNumberOfEpisodes(url) {
+	const podcast = await podcastFeedParser.getPodcastFromURL(url);
+	console.log(podcast.meta.title, podcast.episodes.length);
 }
 
-getNumberOfEpisodes('http://feeds.gimletmedia.com/hearreplyall')
+getNumberOfEpisodes('http://feeds.gimletmedia.com/hearreplyall');
 // "Reply All"
 // 148
-
 ```
 
 ## Errors
@@ -321,9 +318,9 @@ getNumberOfEpisodes('http://feeds.gimletmedia.com/hearreplyall')
 
 ```js
 exports.ERRORS = {
-  'parsingError' : new Error("Parsing error."),
-  'requiredError' : new Error("One or more required values are missing from feed."),
-  'fetchingError' : new Error("Fetching error."),
-  'optionsError' : new Error("Invalid options.")
-}
+	parsingError: new Error('Parsing error.'),
+	requiredError: new Error('One or more required values are missing from feed.'),
+	fetchingError: new Error('Fetching error.'),
+	optionsError: new Error('Invalid options.')
+};
 ```

@@ -1,44 +1,49 @@
 {
-  "name": "@podverse/podcast-feed-parser",
-  "version": "1.1.1",
-  "description": "A highly customizable package for fetching and parsing podcast feeds into simple and manageable JavaScript objects. For use with node and in the browser.",
-  "main": "dist/index.js",
-  "scripts": {
-    "test": "mocha",
-    "build": "tsc -p ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Malex14/podcast-feed-parser.git"
-  },
-  "keywords": [
-    "javascript",
-    "podcast",
-    "podcast-client",
-    "podcast-fetcher",
-    "podcast-aggregator",
-    "rss",
-    "parse",
-    "parser",
-    "feed"
-  ],
-  "author": "Jackson Bierfeldt <jbierfeldt@gmail.com> (http://bierfeldtaudio.com)",
-  "contributors": [
-    "Mitch Downey",
-    "Malex14"
-  ],
-  "license": "MIT",
-  "type": "module",
-  "dependencies": {
-    "ts-node": "^10.9.1",
-    "xml2js": "^0.6.2"
-  },
-  "devDependencies": {
-    "@types/xml2js": "^0.4.12",
-    "chai": "^4.3.8",
-    "chai-as-promised": "^7.1.1",
-    "expect": "^29.7.0",
-    "mocha": "^10.2.0",
-    "typescript": "^5.2.2"
-  }
+	"name": "@malex14/podcast-feed-parser",
+	"version": "1.1.1",
+	"description": "A highly customizable package for fetching and parsing podcast feeds into simple and manageable JavaScript objects. For use with node and in the browser.",
+	"main": "./dist/esm/index.js",
+	"scripts": {
+		"test": "mocha",
+		"build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+		"prepublishOnly": "npm run build"
+	},
+	"files": [
+		"dist/"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Malex14/podcast-feed-parser.git"
+	},
+	"keywords": [
+		"javascript",
+		"podcast",
+		"podcast-client",
+		"podcast-fetcher",
+		"podcast-aggregator",
+		"rss",
+		"parse",
+		"parser",
+		"feed"
+	],
+	"author": "Jackson Bierfeldt <jbierfeldt@gmail.com> (http://bierfeldtaudio.com)",
+	"contributors": [
+		"Mitch Downey",
+		"Malex14"
+	],
+	"license": "MIT",
+	"type": "module",
+	"dependencies": {
+		"ts-node": "^10.9.1",
+		"xml2js": "^0.6.2"
+	},
+	"devDependencies": {
+		"@types/xml2js": "^0.4.12",
+		"chai": "^4.3.8",
+		"chai-as-promised": "^7.1.1",
+		"expect": "^29.7.0",
+		"mocha": "^10.2.0",
+		"typescript": "^5.2.2"
+	},
+	"private": "true"
 }

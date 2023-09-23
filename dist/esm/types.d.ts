@@ -9,19 +9,18 @@ export type Episode = Partial<{
 	funding: Funding[];
 	guid: string;
 	imageURL: string;
-	keywords: any; //TODO
+	keywords: any;
 	language: string;
 	link: string;
 	order: number;
 	pubDate: Date;
-	soundbite: any[]; //TODO
+	soundbite: any[];
 	subtitle: string;
 	summary: string;
 	title: string;
 	transcript: Transcript[];
 	value: Value[];
 }>;
-
 export type ValueRecipient = {
 	name: string;
 	type: string;
@@ -31,36 +30,31 @@ export type ValueRecipient = {
 	split: number;
 	fee?: boolean;
 };
-
 export type Value = {
 	type: string;
 	method: string;
 	suggested: number;
 	recipients?: ValueRecipient[];
 };
-
 export type Transcript = {
 	language: string;
 	rel: string;
 	type: string;
 	url: string;
 };
-
 export type Funding = {
-	value: any; //TODO
+	value: any;
 	url: string;
 };
-
 export type Enclosure = {
 	length: string;
 	type: string;
 	url: string;
 };
-
 export type Meta = Partial<{
 	author: string;
 	blocked: boolean;
-	categories: string[]; //TODO
+	categories: string[];
 	complete: boolean;
 	description: string;
 	docs: string;
@@ -68,11 +62,10 @@ export type Meta = Partial<{
 	explicit: boolean;
 	funding: Funding[];
 	generator: string;
-	guid: string; //TODO
+	guid: string;
 	imageUrl: string;
-	keywords: any; //TODO
-	/** ISO 639-1 format */
-	language: string; //TODO
+	keywords: any;
+	language: string;
 	lastBuildDate: Date;
 	owner: Owner;
 	subtitle: string;
@@ -82,22 +75,18 @@ export type Meta = Partial<{
 	value: Value[];
 	webMaster: string;
 }>;
-
 export type Feed = {
 	meta: Meta;
 	episodes: Episode[];
 };
-
 export type Owner = Partial<{
 	name: string;
 	email: string;
 }>;
-
-export enum PodcastType {
+export declare enum PodcastType {
 	SERIAL = 'serial',
 	EPISODIC = 'episodic'
 }
-
 export type Item = {
 	value: any;
 	attrs: any;
