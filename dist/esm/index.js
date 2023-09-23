@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { parseString } from 'xml2js';
-import { EpisodeType } from './types';
-export * from './types';
+import { EpisodeType } from './types.js';
+export * from './types.js';
 export const ERRORS = {
     requiredError: new Error('One or more required values are missing from feed.'),
     optionsError: new Error('Invalid options.')
