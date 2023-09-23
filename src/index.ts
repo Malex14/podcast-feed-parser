@@ -1,6 +1,8 @@
 import { parseString } from 'xml2js';
 import { Episode, Feed, Funding, Item, Meta, Transcript, Value, ValueRecipient } from './types';
 
+export * from "./types";
+
 export const ERRORS = {
 	requiredError: new Error('One or more required values are missing from feed.'),
 	optionsError: new Error('Invalid options.')
