@@ -1,7 +1,7 @@
 import { parseString } from 'xml2js';
 import { Episode, Feed, Funding, Item, Meta, Transcript, Value, ValueRecipient } from './types';
 
-export * from "./types";
+export * from './types';
 
 export const ERRORS = {
 	requiredError: new Error('One or more required values are missing from feed.'),
@@ -745,7 +745,7 @@ async function fetchFeed(requestParams: {
 
 export const getPodcastFromURL = async function (
 	requestParams: { url: string; headers?: any; timeout?: any },
-	buildParams: any
+	buildParams?: any
 ): Promise<Feed> {
 	try {
 		const options = buildOptions(buildParams);
@@ -761,7 +761,7 @@ export const getPodcastFromURL = async function (
 	}
 };
 
-export const getPodcastFromFeed = function (feed: string, params): Feed {
+export const getPodcastFromFeed = function (feed: string, params?: any): Feed {
 	try {
 		const options = buildOptions(params);
 
