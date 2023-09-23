@@ -20,7 +20,14 @@ export type Episode = Partial<{
 	title: string;
 	transcript: Transcript[];
 	value: Value[];
+	episodeType: EpisodeType;
 }>;
+
+export enum EpisodeType {
+	FULL = 'Full',
+	TRAILER = 'Trailer',
+	BONUS = 'Bonus'
+}
 
 export type ValueRecipient = {
 	name: string;

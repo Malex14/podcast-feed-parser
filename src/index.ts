@@ -1,5 +1,15 @@
 import { parseString } from 'xml2js';
-import { Episode, Feed, Funding, Item, Meta, Transcript, Value, ValueRecipient } from './types';
+import {
+	Episode,
+	EpisodeType,
+	Feed,
+	Funding,
+	Item,
+	Meta,
+	Transcript,
+	Value,
+	ValueRecipient
+} from './types';
 
 export * from './types';
 
@@ -30,6 +40,7 @@ const NS = {
 	itunesSubtitle: 'itunes:subtitle',
 	itunesSummary: 'itunes:summary',
 	itunesType: 'itunes:type',
+	itunesEpisodeType: 'itunes:episodeType',
 	podcastChapters: 'podcast:chapters',
 	podcastFunding: 'podcast:funding',
 	podcastLocked: 'podcast:locked',
@@ -80,6 +91,7 @@ const fieldsEpisodes = [
 	'description',
 	'duration',
 	'enclosure',
+	'episodeType',
 	'explicit',
 	'funding',
 	'guid',
@@ -236,6 +248,12 @@ const GET = {
 
 	editor: function (node) {
 		return node.managingEditor;
+	},
+
+	episodeType: function (node) {
+		if (node[NS.itunesEpisodeType] !== undefined && node[NS.itunesEpisodeType][0] !== undefined) {
+			return node[NS.itunesEpisodeType][0];
+		}
 	},
 
 	explicit: function (node) {
@@ -499,6 +517,21 @@ const CLEAN = {
 			type: object[0]['$'].type,
 			url: object[0]['$'].url
 		};
+	},
+
+	episodeType: function (string: string): EpisodeType | undefined {
+		if (string.length > 0) {
+			switch (string.charAt(0).toUpperCase()) {
+				case 'F':
+					return EpisodeType.FULL;
+				case 'T':
+					return EpisodeType.TRAILER;
+				case 'B':
+					return EpisodeType.BONUS;
+			}
+		}
+
+		return undefined;
 	},
 
 	explicit: function (string) {

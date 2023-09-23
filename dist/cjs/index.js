@@ -25,6 +25,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPodcastFromFeed = exports.getPodcastFromURL = exports.ERRORS = void 0;
 const xml2js_1 = require("xml2js");
+const types_1 = require("./types");
 __exportStar(require("./types"), exports);
 exports.ERRORS = {
     requiredError: new Error('One or more required values are missing from feed.'),
@@ -46,6 +47,7 @@ const NS = {
     itunesSubtitle: 'itunes:subtitle',
     itunesSummary: 'itunes:summary',
     itunesType: 'itunes:type',
+    itunesEpisodeType: 'itunes:episodeType',
     podcastChapters: 'podcast:chapters',
     podcastFunding: 'podcast:funding',
     podcastLocked: 'podcast:locked',
@@ -88,6 +90,7 @@ const fieldsEpisodes = [
     'description',
     'duration',
     'enclosure',
+    'episodeType',
     'explicit',
     'funding',
     'guid',
@@ -212,6 +215,11 @@ const GET = {
     },
     editor: function (node) {
         return node.managingEditor;
+    },
+    episodeType: function (node) {
+        if (node[NS.itunesEpisodeType] !== undefined && node[NS.itunesEpisodeType][0] !== undefined) {
+            return node[NS.itunesEpisodeType][0];
+        }
     },
     explicit: function (node) {
         return node[NS.itunesExplicit];
@@ -377,6 +385,19 @@ const CLEAN = {
             type: object[0]['$'].type,
             url: object[0]['$'].url
         };
+    },
+    episodeType: function (string) {
+        if (string.length > 0) {
+            switch (string.charAt(0).toUpperCase()) {
+                case 'F':
+                    return types_1.EpisodeType.FULL;
+                case 'T':
+                    return types_1.EpisodeType.TRAILER;
+                case 'B':
+                    return types_1.EpisodeType.BONUS;
+            }
+        }
+        return undefined;
     },
     explicit: function (string) {
         if (['yes', 'explicit', 'true'].indexOf(string[0].toLowerCase()) >= 0) {
