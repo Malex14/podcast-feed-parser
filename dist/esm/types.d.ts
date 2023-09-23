@@ -63,7 +63,7 @@ export type Meta = Partial<{
     funding: Funding[];
     generator: string;
     guid: string;
-    imageUrl: string;
+    imageURL: string;
     keywords: any;
     language: string;
     lastBuildDate: Date;

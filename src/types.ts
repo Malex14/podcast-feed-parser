@@ -69,7 +69,7 @@ export type Meta = Partial<{
 	funding: Funding[];
 	generator: string;
 	guid: string; //TODO
-	imageUrl: string;
+	imageURL: string;
 	keywords: any; //TODO
 	/** ISO 639-1 format */
 	language: string; //TODO
