@@ -69,6 +69,7 @@ export type Meta = Partial<{
 	blocked: boolean;
 	categories: string[]; //TODO
 	complete: boolean;
+	copyright: string;
 	description: string;
 	docs: string;
 	editor: string;

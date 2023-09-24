@@ -61,6 +61,7 @@ const fieldsMeta = [
 	'blocked',
 	'categories',
 	'complete',
+	'copyright',
 	'description',
 	'docs',
 	'editor',
