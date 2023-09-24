@@ -1,5 +1,6 @@
 import { parseString } from 'xml2js';
 import {
+	Category,
 	Episode,
 	EpisodeType,
 	Feed,
@@ -206,23 +207,21 @@ const GET = {
 	},
 
 	categories: function (node) {
-		// returns categories as an array containing each category/sub-category
-		// grouping in lists. If there is a sub-category, it is the second element
-		// of an array.
-
 		const itunesCategories = node['itunes:category'];
 		if (Array.isArray(itunesCategories)) {
-			const categoriesArray = itunesCategories.map((item) => {
-				let category = '';
-				if (item && item['$'] && item['$'].text) {
-					category += item['$'].text; // primary category
-					if (item[NS.itunesCategory]) {
-						// sub-category
-						category += '>' + item[NS.itunesCategory][0]['$'].text;
+			const categoriesArray = itunesCategories
+				.map((item) => {
+					let category: Category | undefined;
+					if (item && item['$'] && item['$'].text) {
+						category = { name: item['$'].text }; // primary category
+						if (item[NS.itunesCategory]) {
+							// sub-category
+							category.subCatergory = { name: item[NS.itunesCategory][0]['$'].text };
+						}
 					}
-				}
-				return category;
-			});
+					return category;
+				})
+				.filter((category) => category !== undefined);
 			return categoriesArray;
 		}
 

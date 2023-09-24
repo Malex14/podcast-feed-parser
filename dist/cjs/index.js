@@ -218,16 +218,18 @@ const GET = {
 	categories: function (node) {
 		const itunesCategories = node['itunes:category'];
 		if (Array.isArray(itunesCategories)) {
-			const categoriesArray = itunesCategories.map((item) => {
-				let category = '';
-				if (item && item['$'] && item['$'].text) {
-					category += item['$'].text;
-					if (item[NS.itunesCategory]) {
-						category += '>' + item[NS.itunesCategory][0]['$'].text;
+			const categoriesArray = itunesCategories
+				.map((item) => {
+					let category;
+					if (item && item['$'] && item['$'].text) {
+						category = { name: item['$'].text };
+						if (item[NS.itunesCategory]) {
+							category.subCatergory = { name: item[NS.itunesCategory][0]['$'].text };
+						}
 					}
-				}
-				return category;
-			});
+					return category;
+				})
+				.filter((category) => category !== undefined);
 			return categoriesArray;
 		}
 		return [];

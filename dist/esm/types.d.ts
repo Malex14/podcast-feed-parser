@@ -60,7 +60,7 @@ export type Enclosure = {
 export type Meta = Partial<{
 	author: string;
 	blocked: boolean;
-	categories: string[];
+	categories: Category[];
 	complete: boolean;
 	copyright: string;
 	description: string;
@@ -98,4 +98,8 @@ export type Item = {
 	value: any;
 	attrs: any;
 	nestedTags?: Record<string, Item[]>;
+};
+export type Category = {
+	name: string;
+	subCatergory?: Category;
 };
