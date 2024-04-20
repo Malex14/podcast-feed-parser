@@ -21,6 +21,7 @@ export type Episode = Partial<{
 	transcript: Transcript[];
 	value: Value[];
 	episodeType: EpisodeType;
+	season: number;
 }>;
 
 export enum EpisodeType {

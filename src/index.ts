@@ -42,6 +42,7 @@ const NS = {
 	itunesSummary: 'itunes:summary',
 	itunesType: 'itunes:type',
 	itunesEpisodeType: 'itunes:episodeType',
+	itunesSeason: 'itunes:season',
 	podcastChapters: 'podcast:chapters',
 	podcastFunding: 'podcast:funding',
 	podcastLocked: 'podcast:locked',
@@ -103,6 +104,7 @@ const fieldsEpisodes = [
 	'link',
 	'order',
 	'pubDate',
+	'season',
 	'soundbite',
 	'subtitle',
 	'summary',
@@ -377,6 +379,10 @@ const GET = {
 		return node[NS.itunesOwner];
 	},
 
+	season: function (node) {
+		return node[NS.itunesSeason];
+	},
+
 	soundbite: function (node) {
 		const items = getItemsWithAttrs(node[NS.podcastSoundbite]);
 		const finalItems: { duration: number; startTime: number; title: string }[] = [];
@@ -490,7 +496,6 @@ const CLEAN = {
 	},
 
 	complete: function (string) {
-		console.log(string[0]);
 		if (string[0].toLowerCase() == 'yes') {
 			return true;
 		}
@@ -568,6 +573,10 @@ const CLEAN = {
 
 	lastBuildDate: function (dateString: string): Date {
 		return new Date(dateString);
+	},
+
+	season: function (numberString: string): number {
+		return Number.parseInt(numberString);
 	}
 };
 

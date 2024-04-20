@@ -14,11 +14,11 @@ var __createBinding =
 					};
 				}
 				Object.defineProperty(o, k2, desc);
-		  }
+			}
 		: function (o, m, k, k2) {
 				if (k2 === undefined) k2 = k;
 				o[k2] = m[k];
-		  });
+			});
 var __exportStar =
 	(this && this.__exportStar) ||
 	function (m, exports) {
@@ -34,7 +34,7 @@ var __awaiter =
 				? value
 				: new P(function (resolve) {
 						resolve(value);
-				  });
+					});
 		}
 		return new (P || (P = Promise))(function (resolve, reject) {
 			function fulfilled(value) {
@@ -83,6 +83,7 @@ const NS = {
 	itunesSummary: 'itunes:summary',
 	itunesType: 'itunes:type',
 	itunesEpisodeType: 'itunes:episodeType',
+	itunesSeason: 'itunes:season',
 	podcastChapters: 'podcast:chapters',
 	podcastFunding: 'podcast:funding',
 	podcastLocked: 'podcast:locked',
@@ -136,6 +137,7 @@ const fieldsEpisodes = [
 	'link',
 	'order',
 	'pubDate',
+	'season',
 	'soundbite',
 	'subtitle',
 	'summary',
@@ -315,6 +317,9 @@ const GET = {
 	owner: function (node) {
 		return node[NS.itunesOwner];
 	},
+	season: function (node) {
+		return node[NS.itunesSeason];
+	},
 	soundbite: function (node) {
 		const items = getItemsWithAttrs(node[NS.podcastSoundbite]);
 		const finalItems = [];
@@ -401,7 +406,6 @@ const CLEAN = {
 		}
 	},
 	complete: function (string) {
-		console.log(string[0]);
 		if (string[0].toLowerCase() == 'yes') {
 			return true;
 		}
@@ -464,6 +468,9 @@ const CLEAN = {
 	},
 	lastBuildDate: function (dateString) {
 		return new Date(dateString);
+	},
+	season: function (numberString) {
+		return Number.parseInt(numberString);
 	}
 };
 const cleanDefault = function (node) {

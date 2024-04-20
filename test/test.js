@@ -3,7 +3,7 @@ const expect = _expect;
 import chaiAsPromised from 'chai-as-promised';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
-import { ERRORS as _ERRORS, getPodcastFromURL, getPodcastFromFeed } from '../src/index.js';
+import { ERRORS as _ERRORS, getPodcastFromURL, getPodcastFromFeed } from '../dist/esm/index.js';
 import { fileURLToPath } from 'url';
 const ERRORS = _ERRORS;
 
@@ -129,6 +129,7 @@ describe('Getting Podcast Object from Sample Feed', function () {
 						'language',
 						'enclosure',
 						'duration',
+						'season',
 						'summary',
 						'blocked',
 						'explicit',
@@ -164,6 +165,7 @@ describe('Getting Podcast Object from Sample Feed', function () {
 				expect(podcast.episodes[0].blocked).to.be.undefined;
 				expect(podcast.episodes[0].explicit).to.equal(false);
 				expect(podcast.episodes[0].order).to.be.undefined;
+				expect(podcast.episodes[0].season).to.be.equal(1);
 			});
 		});
 	});
